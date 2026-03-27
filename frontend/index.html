@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RollingWord - 单词复习</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 主卡片区域 -->
+        <div class="card" id="wordCard">
+            <div class="word-display">
+                <span id="wordText">Loading...</span>
+            </div>
+            <div class="info-section" id="infoSection">
+                <div class="info-item" id="definitionCn">
+                    <span class="label">释义</span>
+                    <span class="content"></span>
+                </div>
+                <div class="info-item" id="definitionEn">
+                    <span class="label">English</span>
+                    <span class="content"></span>
+                </div>
+                <div class="info-item" id="cognates">
+                    <span class="label">同源词</span>
+                    <span class="content"></span>
+                </div>
+                <div class="info-item" id="synonyms">
+                    <span class="label">近反义词</span>
+                    <span class="content"></span>
+                </div>
+                <div class="info-item" id="sentences">
+                    <span class="label">例句</span>
+                    <span class="content"></span>
+                </div>
+                <div class="info-item" id="confusables">
+                    <span class="label">形近词</span>
+                    <span class="content"></span>
+                </div>
+                <div class="info-item" id="notes">
+                    <span class="label">助记</span>
+                    <span class="content"></span>
+                </div>
+            </div>
+            <!-- 纠错按钮 -->
+            <button class="correct-btn" id="correctBtn">纠错</button>
+        </div>
+
+        <!-- 进度指示 -->
+        <div class="progress">
+            <span id="progressText">0 / 0</span>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="actions">
+            <button class="btn btn-mastered" id="btnMastered">
+                <span class="icon">✓</span>
+                <span class="text">熟记</span>
+            </button>
+            <button class="btn btn-unfamiliar" id="btnUnfamiliar">
+                <span class="icon">?</span>
+                <span class="text">不熟</span>
+            </button>
+            <button class="btn btn-important" id="btnImportant">
+                <span class="icon">★</span>
+                <span class="text">重要</span>
+            </button>
+            <button class="btn btn-next" id="btnNext">
+                <span class="icon">→</span>
+                <span class="text">下一个</span>
+            </button>
+        </div>
+
+        <!-- 统计面板 -->
+        <div class="stats-panel">
+            <div class="stat-item">
+                <span class="stat-value" id="statTotal">0</span>
+                <span class="stat-label">总数</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="statMastered">0</span>
+                <span class="stat-label">已熟记</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="statImportant">0</span>
+                <span class="stat-label">重要</span>
+            </div>
+        </div>
+
+        <!-- 文件夹切换 -->
+        <div class="folder-tabs">
+            <button class="tab active" data-folder="all">全部</button>
+            <button class="tab" data-folder="mastered">熟记</button>
+            <button class="tab" data-folder="unfamiliar">不熟</button>
+            <button class="tab" data-folder="important">重要</button>
+            <button class="tab" data-folder="history">历史</button>
+        </div>
+    </div>
+
+    <!-- 纠错弹窗 -->
+    <div class="modal" id="correctModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>纠错反馈</h3>
+                <button class="modal-close" id="closeCorrectModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-hint">请描述数据中的错误，AI会帮你修正：</p>
+                <textarea id="feedbackText" placeholder="例如：释义里混入了助记内容..."></textarea>
+                <div class="modal-preview">
+                    <p class="preview-label">当前数据：</p>
+                    <pre id="previewData"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="cancelCorrectBtn">取消</button>
+                <button class="btn btn-submit" id="submitCorrectBtn">提交纠错</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 撤销纠错弹窗 -->
+    <div class="modal" id="rollbackModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认撤销纠错</h3>
+                <button class="modal-close" id="closeRollbackModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-hint">撤销后，该单词将恢复为以下状态：</p>
+                <div class="modal-preview">
+                    <pre id="rollbackPreviewData" style="color: #d32f2f; background: #ffebee;"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="cancelRollbackBtn">放弃撤销</button>
+                <button class="btn btn-danger" id="confirmRollbackBtn">确认覆盖</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录弹窗 -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>学习历史</h3>
+                <button class="modal-close" id="closeHistory">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="history-list" id="historyList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="closeHistoryBtn">关闭</button>
+                <button class="btn btn-danger" id="clearHistory">清空历史</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
