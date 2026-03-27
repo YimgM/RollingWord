@@ -1,0 +1,16 @@
+# 数据库与本地数据
+data/*.db
+data/*.sqlite3
+
+# Python 虚拟环境与缓存
+venv/
+__pycache__/
+*.pyc
+
+# 环境变量与日志
+.env
+*.log
+*.err
+
+# macOS 系统垃圾
+.DS_Store
