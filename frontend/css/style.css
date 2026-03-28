@@ -83,6 +83,7 @@ body {
   font-size: 0.95rem;
   color: #333;
   line-height: 1.5;
+  white-space: pre-line;
 }
 
 #definitionCn .content {
