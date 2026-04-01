@@ -41,4 +41,3 @@
 这将会根据 data.json 的内容自动化生成项目所需的数据库文件
 
 2. 在 RollingWord 项目的根目录执行：python backend/server.py
-这将会启动
