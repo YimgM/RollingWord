@@ -17,31 +17,156 @@ body {
   padding: 20px;
 }
 
-.container {
+/* 三栏布局 */
+.page-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   width: 100%;
-  max-width: 400px;
+  max-width: 520px;
+}
+
+/* 主内容区 */
+.container {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* 左侧边栏：标记按钮 */
+.left-sidebar {
+  width: 58px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 24px;
+}
+
+/* 右侧边：列表入口 */
+.right-area {
+  width: 48px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+}
+
+/* 左侧标记按钮 */
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  gap: 2px;
+}
+
+.action-btn .icon {
+  font-size: 1.3rem;
+}
+
+.action-btn .text {
+  font-size: 0.65rem;
+}
+
+.btn-mastered {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-mastered:hover {
+  background: #43a047;
+}
+
+.btn-mastered.done {
+  background: #a5d6a7;
+  color: #1b5e20;
+}
+
+.btn-unfamiliar {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-unfamiliar:hover {
+  background: #f57c00;
+}
+
+.btn-unfamiliar.flagged {
+  background: #ffe0b2;
+  color: #e65100;
+}
+
+.btn-important {
+  background: #e91e63;
+  color: white;
+}
+
+.btn-important:hover {
+  background: #c2185b;
+}
+
+.btn-important.marked {
+  background: #f8bbd9;
+  color: #880e4f;
+}
+
+/* 右侧列表切换按钮 */
+.list-toggle-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 58px;
+  border: none;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  color: #666;
+  gap: 2px;
+  transition: all 0.2s ease;
+}
+
+.list-toggle-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.list-toggle-btn .icon {
+  font-size: 1.2rem;
+}
+
+.list-toggle-btn .text {
+  font-size: 0.62rem;
 }
 
 /* 卡片样式 */
 .card {
   background: white;
   border-radius: 20px;
-  padding: 30px 24px;
+  padding: 30px 24px 24px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  min-height: 300px;
   display: flex;
   flex-direction: column;
   position: relative;
+  min-height: 280px;
 }
 
 .word-display {
   text-align: center;
-  padding: 20px 0;
-  border-bottom: 2px solid #f0f0f0;
-  margin-bottom: 20px;
+  padding: 16px 0 8px;
 }
 
 .word-display span {
@@ -51,11 +176,43 @@ body {
   letter-spacing: 1px;
 }
 
+/* 查看/收起 按钮 */
+.view-toggle-btn {
+  display: block;
+  margin: 14px auto 0;
+  padding: 7px 28px;
+  background: #f0f4ff;
+  border: 1.5px solid #c5d3ff;
+  border-radius: 20px;
+  color: #4a6cf7;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-toggle-btn:hover {
+  background: #e6edff;
+  border-color: #a3b8ff;
+}
+
+/* 词汇详情区 */
 .info-section {
-  flex: 1;
-  display: flex;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 460px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  display: none;
   flex-direction: column;
   gap: 12px;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .info-item {
@@ -145,131 +302,121 @@ body {
   font-weight: 500;
 }
 
-/* 操作按钮 */
-.actions {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+/* 导航箭头（底部中央） */
+.nav-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
 }
 
-.btn {
+.nav-arrow {
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: #2196f3;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 14px 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(33, 150, 243, 0.35);
+}
+
+.nav-arrow:hover {
+  background: #1976d2;
+  transform: scale(1.06);
+}
+
+.nav-arrow:active {
+  transform: scale(0.94);
+}
+
+/* 统计（不显眼） */
+.stats-mini {
+  text-align: center;
+  font-size: 0.77rem;
+  color: #bbb;
+  padding: 2px 0;
+}
+
+/* 基础按钮（弹窗用） */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
-.btn .icon {
-  font-size: 1.3rem;
-  margin-bottom: 4px;
+/* 右侧抽屉面板 */
+.right-panel {
+  position: fixed;
+  top: 0;
+  right: -220px;
+  width: 200px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  z-index: 600;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 16px 16px;
 }
 
-.btn-mastered {
-  background: #4caf50;
-  color: white;
+.right-panel.open {
+  right: 0;
 }
 
-.btn-mastered:hover {
-  background: #43a047;
+.panel-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #aaa;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0 4px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
 }
 
-.btn-mastered.done {
-  background: #a5d6a7;
-  color: #1b5e20;
+.panel-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 500;
 }
 
-.btn-unfamiliar {
-  background: #ff9800;
-  color: white;
-}
-
-.btn-unfamiliar:hover {
-  background: #f57c00;
-}
-
-.btn-unfamiliar.flagged {
-  background: #ffe0b2;
-  color: #e65100;
-}
-
-.btn-important {
-  background: #e91e63;
-  color: white;
-}
-
-.btn-important:hover {
-  background: #c2185b;
-}
-
-.btn-important.marked {
-  background: #f8bbd9;
-  color: #880e4f;
-}
-
-.btn-next {
-  background: #2196f3;
-  color: white;
-}
-
-.btn-next:hover {
-  background: #1976d2;
-}
-
-/* 统计面板 */
-.stats-panel {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  border-radius: 14px;
-  padding: 16px;
-}
-
-.stat-item {
-  text-align: center;
-  color: #666;
-}
-
-.stat-value {
+.panel-backdrop.show {
   display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #333;
 }
 
-.stat-label {
-  display: block;
-  font-size: 0.75rem;
-  opacity: 0.8;
-  margin-top: 4px;
-}
-
-/* 文件夹标签 */
+/* 文件夹标签（右侧面板内） */
 .folder-tabs {
   display: flex;
-  gap: 6px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  border-radius: 14px;
-  padding: 8px;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .tab {
-  flex: 1;
-  padding: 10px 6px;
+  text-align: left;
+  padding: 12px 16px;
   border: none;
   border-radius: 10px;
   background: transparent;
-  color: #666;
-  font-size: 0.8rem;
+  color: #555;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -430,31 +577,6 @@ body {
   background: #d32f2f;
 }
 
-/* 系统工具栏 */
-.system-tools {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.tool-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.8);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tool-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
 /* 历史记录列表 */
 .history-list {
   display: flex;
@@ -547,21 +669,40 @@ body {
 }
 
 /* 响应式调整 */
-@media (max-width: 360px) {
+@media (max-width: 400px) {
+  .page-layout {
+    gap: 6px;
+  }
+
+  .left-sidebar {
+    width: 50px;
+  }
+
+  .action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+
+  .action-btn .icon {
+    font-size: 1.1rem;
+  }
+
+  .right-area {
+    width: 42px;
+  }
+
+  .list-toggle-btn {
+    width: 42px;
+  }
+
   .word-display span {
     font-size: 2rem;
   }
 
-  .btn {
-    padding: 12px 6px;
-  }
-
-  .btn .text {
-    font-size: 0.75rem;
-  }
-
-  .tab {
-    font-size: 0.75rem;
-    padding: 8px 4px;
+  .nav-arrow {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
   }
 }

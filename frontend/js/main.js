@@ -175,15 +175,38 @@ class AppController {
     }
 
     bindEvents() {
-        // 底部动作按钮
+        // 左侧标记按钮
         document.getElementById('btnMastered').addEventListener('click', () => this.handleStateToggle('is_mastered'));
         document.getElementById('btnUnfamiliar').addEventListener('click', () => this.handleStateToggle('is_unfamiliar'));
         document.getElementById('btnImportant').addEventListener('click', () => this.handleStateToggle('is_important'));
-        document.getElementById('btnNext').addEventListener('click', () => this.nextWord());
 
-        // 标签页切换
+        // 导航箭头
+        document.getElementById('btnNext').addEventListener('click', () => this.nextWord());
+        document.getElementById('btnPrev')?.addEventListener('click', () => {
+            this.store.prev();
+            this.showCurrentWord();
+        });
+
+        // 查看/收起 切换
+        document.getElementById('viewToggleBtn')?.addEventListener('click', () => this.ui.toggleInfoSection());
+
+        // 右侧抽屉开关
+        document.getElementById('listToggleBtn')?.addEventListener('click', () => {
+            document.getElementById('rightPanel').classList.add('open');
+            document.getElementById('panelBackdrop').classList.add('show');
+        });
+        document.getElementById('panelBackdrop')?.addEventListener('click', () => {
+            document.getElementById('rightPanel').classList.remove('open');
+            document.getElementById('panelBackdrop').classList.remove('show');
+        });
+
+        // 标签页切换（点击后关闭抽屉）
         document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => this.changeFolder(tab.dataset.folder));
+            tab.addEventListener('click', () => {
+                this.changeFolder(tab.dataset.folder);
+                document.getElementById('rightPanel').classList.remove('open');
+                document.getElementById('panelBackdrop').classList.remove('show');
+            });
         });
 
         // 读音点击

@@ -8,8 +8,8 @@ export class UIManager {
             progressText: document.getElementById('progressText'),
             toast: document.getElementById('toast'),
             card: document.getElementById('wordCard'),
-            actions: document.querySelector('.actions'),
-            historyList: document.getElementById('historyListInCard') // 需在HTML中预置或动态生成
+            leftSidebar: document.getElementById('leftSidebar'),
+            navArrows: document.querySelector('.nav-arrows'),
         };
     }
 
@@ -28,14 +28,14 @@ export class UIManager {
 
         const wordDisplay = document.querySelector('.word-display');
         this.elements.wordText.style.display = '';
-        wordDisplay.style.borderBottom = '';
+        wordDisplay.style.display = 'block';
 
         const emptyState = wordDisplay.querySelector('.empty-state');
         if (emptyState) emptyState.style.display = 'none';
 
         this.elements.wordText.textContent = word.word;
-        
-        // 渲染各项释义
+
+        // 渲染各项释义（填充内容但保持折叠）
         this._renderInfoItem('definitionCn', word.definition_cn);
         this._renderInfoItem('definitionEn', word.definition_en);
         this._renderInfoItem('cognates', word.cognates);
@@ -44,9 +44,16 @@ export class UIManager {
         this._renderInfoItem('confusables', word.confusables);
         this._renderInfoItem('notes', word.notes);
 
-        // 更新按钮与标志
+        // 更新按钮状态
         this._updateActionButtons(word);
-        
+
+        // 每次切换单词时重置为折叠状态
+        this._setInfoCollapsed(true);
+
+        // 显示查看按钮
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) viewToggleBtn.style.display = '';
+
         document.getElementById('correctBtn').style.display = 'block';
         const rollbackBtn = document.getElementById('btnRollback');
         if (rollbackBtn) rollbackBtn.style.display = isCorrected ? 'block' : 'none';
@@ -61,13 +68,10 @@ export class UIManager {
 
         if (Array.isArray(content) && content.length > 0) {
             if (id === 'synonyms') {
-                // 处理同反义词对象数组
                 text = content.map(s => `${s.type === 'antonym' ? '反' : '同'} ${s.word}`).join('\n');
             } else if (id === 'cognates' || id === 'confusables') {
-                // 处理同源/形近词对象数组
                 text = content.map(c => `${c.word} ${c.definition_cn ? ' ' + c.definition_cn : ''}`.trim()).join('\n');
             } else if (typeof content[0] === 'string') {
-                // 处理例句等纯字符串数组
                 text = content.join('\n');
             }
         } else if (typeof content === 'string') {
@@ -90,10 +94,9 @@ export class UIManager {
 
     _renderEmptyState() {
         const wordDisplay = document.querySelector('.word-display');
-        this.elements.wordText.style.display = 'none'; // 隐藏 span
-        wordDisplay.style.borderBottom = 'none';
+        this.elements.wordText.style.display = 'none';
+        wordDisplay.style.display = 'block';
 
-        // 创建或复用独立的 empty-state 容器
         let emptyState = wordDisplay.querySelector('.empty-state');
         if (!emptyState) {
             emptyState = document.createElement('div');
@@ -106,13 +109,35 @@ export class UIManager {
             <p>当前分类暂无单词</p>
             <p style="font-size: 0.85rem; margin-top: 8px; opacity: 0.7;">切换到其他分类继续学习</p>
         `;
-        
+
         ['definitionCn', 'definitionEn', 'cognates', 'synonyms', 'sentences', 'confusables', 'notes']
             .forEach(id => document.getElementById(id).classList.remove('visible'));
-        
+
+        // 无词时隐藏查看按钮和详情区
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) viewToggleBtn.style.display = 'none';
+        const infoSection = document.getElementById('infoSection');
+        if (infoSection) infoSection.style.display = 'none';
+
         document.getElementById('correctBtn').style.display = 'none';
         const rollbackBtn = document.getElementById('btnRollback');
         if (rollbackBtn) rollbackBtn.style.display = 'none';
+    }
+
+    /**
+     * 切换详情折叠/展开状态
+     */
+    toggleInfoSection() {
+        const infoSection = document.getElementById('infoSection');
+        const isCollapsed = infoSection.style.display === 'none' || infoSection.style.display === '';
+        this._setInfoCollapsed(!isCollapsed);
+    }
+
+    _setInfoCollapsed(collapsed) {
+        const infoSection = document.getElementById('infoSection');
+        const btn = document.getElementById('viewToggleBtn');
+        if (infoSection) infoSection.style.display = collapsed ? 'none' : 'flex';
+        if (btn) btn.textContent = collapsed ? '查看释义' : '隐藏';
     }
 
     _formatTime(isoString) {
@@ -125,20 +150,19 @@ export class UIManager {
     }
 
     renderHistoryList(historyData, allWords) {
-        // 获取卡片的 DOM，用历史记录列表覆盖它
         const infoSection = document.getElementById('infoSection');
         const wordDisplay = document.querySelector('.word-display');
-        
-        // 隐藏常规播放器组件
+
         wordDisplay.style.display = 'none';
         infoSection.style.display = 'none';
 
-        // 在历史界面隐藏纠错和撤销按钮
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) viewToggleBtn.style.display = 'none';
+
         document.getElementById('correctBtn').style.display = 'none';
         const rollbackBtn = document.getElementById('btnRollback');
         if (rollbackBtn) rollbackBtn.style.display = 'none';
-        
-        // 如果不存在 history 容器则动态创建一个
+
         let historyContainer = document.getElementById('historyListInCard');
         if (!historyContainer) {
             historyContainer = document.createElement('div');
@@ -153,10 +177,9 @@ export class UIManager {
             return;
         }
 
-        // 渲染列表
         historyContainer.innerHTML = historyData.map(h => {
             const wordData = allWords.find(w => w.id === h.id);
-            if (!wordData) return ''; 
+            if (!wordData) return '';
             const def = (wordData.definition_cn || '').substring(0, 50);
             return `
                 <div class="history-item" data-id="${h.id}">
@@ -170,7 +193,10 @@ export class UIManager {
 
     resetCardLayout() {
         document.querySelector('.word-display').style.display = 'block';
-        document.getElementById('infoSection').style.display = 'flex';
+        // 重置为折叠状态（不直接显示详情）
+        this._setInfoCollapsed(true);
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) viewToggleBtn.style.display = '';
         const historyContainer = document.getElementById('historyListInCard');
         if (historyContainer) historyContainer.style.display = 'none';
     }
@@ -189,12 +215,13 @@ export class UIManager {
         document.querySelectorAll('.tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.folder === folder);
         });
-        
-        if (folder === 'history') {
-            this.elements.actions.style.display = 'none';
-            // 历史记录渲染逻辑移交 Controller (main.js)
-        } else {
-            this.elements.actions.style.display = 'grid';
+
+        const isHistory = folder === 'history';
+        if (this.elements.leftSidebar) {
+            this.elements.leftSidebar.style.display = isHistory ? 'none' : 'flex';
+        }
+        if (this.elements.navArrows) {
+            this.elements.navArrows.style.display = isHistory ? 'none' : 'flex';
         }
     }
 
